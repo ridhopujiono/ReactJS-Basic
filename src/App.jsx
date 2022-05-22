@@ -1,55 +1,72 @@
-import React, { useState } from "react";
-import Card from "./components/Card";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 
 function App(){
 
+	const [user, setUser] = useState([]);
+	const [identifier, setIdentifier] = useState(1);
+	const [loading, setLoading] = useState(false)
+
+	const getUser = async ()=> {
+		// jika belum dapat data maka loading true
+		setLoading(true)
+		try{
+			let response = await axios.get(`https://jsonplaceholder.typicode.com/users/${identifier}`);
+			setUser(response.data)
+
+			// jika sudah dapat data loading is false
+			setLoading(false)
+
+
+		} catch(e){
+			console.log(e.message);
+
+			// jika error maka loading true
+			setLoading(true)
+		}
+	}
+
+	useEffect(()=>{
+		getUser()
+	}, [identifier])
+
+
 	return (
-		<div className="p-5">
+		<div className="py-5">
 			<div className="container">
-				<div className="row">
-					<div className="col-md-4">
-						<Card
-							// cara pertama
-							// imageSource="http://placekitten.com/100/100"
-							// titlePost="First Post"
-							// publishedPost="1 Januari 2002"
+				<div className="row justify-content-center">
+					<div className="col-md-8">
+						<div className="form-group mb-4">
+							<label htmlFor="">Masukan id user</label>
+							<input type="text" className="form-control" value={identifier} onChange={(e)=> setIdentifier(e.target.value)} />
+						</div>
 
-							// cara kedua dengan object dalam object
+						{
+									loading ? 'Loading ...' : 
+							<table className="table table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Username</th>
+										<th>Email</th>
+										<th>Website</th>
+										<th>Phone</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>{user.name}</td>
+										<td>{user.username}</td>
+										<td>{user.email}</td>
+										<td>{user.website}</td>
+										<td>{user.phone}</td>
+									</tr>
+								</tbody>
+							</table>
 
-							content=
-							{
-								{
-									imageSource:"http://placekitten.com/100/100",
-									titlePost:"First Post",
-									publishedPost:"1 Januari 2002",
-								}
-							}
-						/>
-					</div>
-					<div className="col-md-4">
-						<Card 
-							content=
-							{
-								{
-									imageSource:"http://placekitten.com/g/100/100",
-									titlePost:"Second Post",
-									publishedPost:"2 Januari 2002",
-								}
-							}
-						/>
-					</div>
-					<div className="col-md-4">
-						<Card
-							content=
-							{
-								{
-									imageSource:"http://placekitten.com/100/100",
-									titlePost:"Third Post",
-									publishedPost:"3 Januari 2002",
-								}
-							}
-						/>
+
+						}
 					</div>
 				</div>
 			</div>
