@@ -1,45 +1,67 @@
 import React from "react";
-import axios from "axios";
 class App extends React.Component {
 
-	// Constructor
-	constructor() {
+	constructor(){
 		super();
-		// Membuat state, didalamnya terdapat objek users
+
+
 		this.state = {
-			users: []
+			firstname: '',
+			lastname: '',
+			name: '',
 		}
-
 	}
-
-	// Buat Funsi Asyncronus
-	getUsers = async () => {
-		// Buat variabel untuk menangkap API dengan axios
-		let response = await axios.get("https://jsonplaceholder.typicode.com/users/10");
-
-		// Untuk mengSET / mengisi state users
+	
+	changeHandler = (e)=>{
 		this.setState({
-			users: response.data
+			// mengapa seperti berikut ? [e.target.name]
+			// jadi disini tujuanya untuk setState objek atau property sesuai dengan input name, dan mengisinya dengan value
+			 [e.target.name] : e.target.value
 		});
 	}
 
-	// Mount fungsi getUsers()
-	componentDidMount(){
-		this.getUsers()
+	submitHandler = (e)=>{ 
+		e.preventDefault();
+		this.setState({
+			name: `${this.state.firstname} ${this.state.lastname}`
+		})
+		this.state.firstname = '';
+		this.state.lastname = '';
 	}
-
-	
 	render() {
-
-		const userapi = this.state.users;
-		
+		// ini sama dengan const name = this.state.name
+		const {name} = this.state;
 		return (
-		<div>
-			<ul>
-				<li>Nama : {userapi.name}</li>
-			</ul>
-		</div>
-	);
+			<div className="container">
+				<div className="row p-5">
+					<div className="col-md-4">
+						<div className="card">
+							<div className="card-header">Formulir</div>
+							<div className="card-body">
+								<form onSubmit={this.submitHandler}>
+									<div className="form-group mb-4">
+										<label htmlFor="firstname">First Name</label>
+										<input onChange={this.changeHandler} value={this.state.firstname} type="text" className="form-control" name="firstname" />
+									</div>
+									<div className="form-group mb-4">
+										<label htmlFor="lastname">Last Name</label>
+										<input onChange={this.changeHandler} value={this.state.lastname} type="text" className="form-control" name="lastname" />
+									</div>
+									<div className="form-group">
+										<button type="submit" className="btn btn-primary d-block w-100">Show</button>
+									</div>
+								</form>
+							</div>
+							<div className="card-footer">
+								{/* Ini hanya ternary */}
+								My Name is {(name ? name : '....')}
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		);
 }
 }
 
